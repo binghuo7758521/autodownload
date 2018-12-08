@@ -246,5 +246,10 @@ namespace WindowsFormsApplication1
         {
             button3_Click(null,null);
         }
+
+        private void button6_Click_1(object sender, EventArgs e)
+        {
+
+        }
     }
 }
