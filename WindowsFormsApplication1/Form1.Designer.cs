@@ -30,12 +30,15 @@
         {
             this.components = new System.ComponentModel.Container();
             this.button1 = new System.Windows.Forms.Button();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.textBox_log = new System.Windows.Forms.TextBox();
             this.button2 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
             this.button5 = new System.Windows.Forms.Button();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.timer_del_okpic = new System.Windows.Forms.Timer(this.components);
+            this.button6 = new System.Windows.Forms.Button();
+            this.checkBox_showlog = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // button1
@@ -49,13 +52,13 @@
             this.button1.Visible = false;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
-            // textBox1
+            // textBox_log
             // 
-            this.textBox1.Location = new System.Drawing.Point(175, 12);
-            this.textBox1.Multiline = true;
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(702, 562);
-            this.textBox1.TabIndex = 1;
+            this.textBox_log.Location = new System.Drawing.Point(175, 12);
+            this.textBox_log.Multiline = true;
+            this.textBox_log.Name = "textBox_log";
+            this.textBox_log.Size = new System.Drawing.Size(702, 562);
+            this.textBox_log.TabIndex = 1;
             // 
             // button2
             // 
@@ -105,16 +108,46 @@
             this.timer1.Interval = 10000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // timer_del_okpic
+            // 
+            this.timer_del_okpic.Enabled = true;
+            this.timer_del_okpic.Interval = 6000;
+            this.timer_del_okpic.Tick += new System.EventHandler(this.timer_del_okpic_Tick);
+            // 
+            // button6
+            // 
+            this.button6.Location = new System.Drawing.Point(29, 76);
+            this.button6.Name = "button6";
+            this.button6.Size = new System.Drawing.Size(130, 23);
+            this.button6.TabIndex = 6;
+            this.button6.Text = "手工删除3天前照片";
+            this.button6.UseVisualStyleBackColor = true;
+            this.button6.Click += new System.EventHandler(this.button6_Click);
+            // 
+            // checkBox_showlog
+            // 
+            this.checkBox_showlog.AutoSize = true;
+            this.checkBox_showlog.Checked = true;
+            this.checkBox_showlog.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBox_showlog.Location = new System.Drawing.Point(29, 40);
+            this.checkBox_showlog.Name = "checkBox_showlog";
+            this.checkBox_showlog.Size = new System.Drawing.Size(72, 16);
+            this.checkBox_showlog.TabIndex = 7;
+            this.checkBox_showlog.Text = "显示日志";
+            this.checkBox_showlog.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(902, 603);
+            this.Controls.Add(this.checkBox_showlog);
+            this.Controls.Add(this.button6);
             this.Controls.Add(this.button5);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.button2);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.textBox_log);
             this.Controls.Add(this.button1);
             this.Name = "Form1";
             this.Text = "OSS自动下载程序";
@@ -127,12 +160,15 @@
         #endregion
 
         private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox textBox_log;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.Button button5;
         private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.Timer timer_del_okpic;
+        private System.Windows.Forms.Button button6;
+        private System.Windows.Forms.CheckBox checkBox_showlog;
     }
 }
 

@@ -36,7 +36,21 @@ namespace WindowsFormsApplication1
 
 
         }
+        private void show_log(string logstr)
+        {
+            
 
+            if (textBox_log.Lines.Count() > 500)
+            {
+                textBox_log.Text="日志已满清空之前日志";
+            }
+            if (checkBox_showlog.Checked)
+            {
+
+                textBox_log.AppendText(logstr);
+            }
+
+        }
 
         private void button1_Click(object sender, EventArgs e)
         {
@@ -49,11 +63,11 @@ namespace WindowsFormsApplication1
                 // 创建存储空间。
                 var bucket = client.CreateBucket(bucketName);
 
-                textBox1.AppendText("Create bucket succeeded  ");
+                show_log("Create bucket succeeded  ");
             }
             catch (Exception)
             {
-                textBox1.AppendText("Create bucket false  ");
+                show_log("Create bucket false  ");
             }
 
 
@@ -67,11 +81,11 @@ namespace WindowsFormsApplication1
             {
                 var client = new OssClient(endpoint, accessKeyId, accessKeySecret);
                 var result = client.ListObjects(bucketName);
-                textBox1.AppendText("list object succeeded  ");
+                show_log("list object succeeded  ");
                 foreach (var summary in result.ObjectSummaries)
                 {
 
-                    textBox1.AppendText(summary.Key + "\r\n");
+                    show_log(summary.Key + "\r\n");
 
                 }
 
@@ -79,7 +93,7 @@ namespace WindowsFormsApplication1
             }
             catch (Exception ex)
             {
-                textBox1.AppendText("list object false  " + ex.Message);
+                show_log("list object false  " + ex.Message);
 
             }
 
@@ -89,7 +103,8 @@ namespace WindowsFormsApplication1
 
         private void button3_Click(object sender, EventArgs e)
         {
-            textBox1.AppendText("开始扫描阿里oss\r\n");   
+
+            show_log("开始扫描阿里oss\r\n");   
             timer1.Enabled = false;
             var client = new OssClient(endpoint, accessKeyId, accessKeySecret);
             var keys = new List<string>();
@@ -110,11 +125,11 @@ namespace WindowsFormsApplication1
                 foreach (var summary in result.ObjectSummaries)
                 {
 
-                    textBox1.AppendText("a--"+summary.Key + "\r\n");
+                    show_log("a--"+summary.Key + "\r\n");
                     keys.Add(summary.Key);
                     if (summary.Size==0) 
                     {
-                        textBox1.AppendText(" 删除:" + summary.Key + "\r\n");
+                        show_log(" 删除:" + summary.Key + "\r\n");
                         client.DeleteObject(bucketName, summary.Key);
                         continue;
                     }
@@ -122,7 +137,7 @@ namespace WindowsFormsApplication1
 
 
 
-
+            
 
 
                     var obj = client.GetObject(bucketName, summary.Key);
@@ -162,7 +177,7 @@ namespace WindowsFormsApplication1
                     var req = new CopyObjectRequest(bucketName, summary.Key, downok_bucketName, summary.Key);                 
                     client.CopyObject(req);
                     client.DeleteObject(bucketName, summary.Key);
-                    textBox1.AppendText("Get object succeeded" + downloadFilename + "\r\n");                  
+                    show_log("Get object succeeded" + downloadFilename + "\r\n");                  
                      
 
                 }
@@ -195,20 +210,20 @@ namespace WindowsFormsApplication1
                     }
                     fs.Close();
                 }
-                textBox1.AppendText("Get object succeeded" + "\r\n");
+                show_log("Get object succeeded" + "\r\n");
 
             }
             catch (Exception ex)
             {
 
-                textBox1.AppendText("Get object failed. " + ex.Message + "\r\n");
+                show_log("Get object failed. " + ex.Message + "\r\n");
             }
         }
 
         private void button5_Click(object sender, EventArgs e)
         {
             string downloadFilename =@"d:\autodown\2s22\rr";
-            textBox1.AppendText("GGetFileName" + Path.GetFileName(downloadFilename) + "\r\n");
+            show_log("GGetFileName" + Path.GetFileName(downloadFilename) + "\r\n");
 
             if (Directory.Exists(downloadFilename))
             {
@@ -222,7 +237,12 @@ namespace WindowsFormsApplication1
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            timer1.Enabled = false;
+            timer1.Enabled = true;
+            timer1.Interval = 1000 * 30;
+            show_log("30秒后自动开始下载，");
+
+            timer_del_okpic.Interval = 1000 * 60 * 60;//一个小时监测一次是否有要删除的文件
+            timer_del_okpic.Enabled = true;
             bucketName = ConfigurationManager.AppSettings["blucketname"];
             prefix = ConfigurationManager.AppSettings["blucketdir"];
             endpoint = ConfigurationManager.AppSettings["endpoint"];
@@ -235,21 +255,64 @@ namespace WindowsFormsApplication1
      
         }
 
-        private void button6_Click(object sender, EventArgs e)
-        {
-             
-          
 
-        }
 
         private void timer1_Tick(object sender, EventArgs e)
         {
             button3_Click(null,null);
         }
 
-        private void button6_Click_1(object sender, EventArgs e)
+        private void button6_Click(object sender, EventArgs e)
         {
 
+            var client = new OssClient(endpoint, accessKeyId, accessKeySecret);
+            var keys = new List<string>();
+            ObjectListing result = null;
+            string nextMarker = string.Empty;
+            string downloadFilename;
+            string temdirname;
+            show_log(" 正在监测是否有过期文件\r\n");
+            do 
+            {
+
+                var listObjectsRequest = new ListObjectsRequest(downok_bucketName)
+                {
+                    Marker = nextMarker,
+                    MaxKeys = 1000,
+                    Prefix = prefix,
+                };
+                result = client.ListObjects(listObjectsRequest);
+
+                foreach (var summary in result.ObjectSummaries)
+                {
+                    
+                    keys.Add(summary.Key);
+                    
+                    if ((summary.Size == 0)||((DateTime.Now- summary.LastModified).Days>3))
+                    {
+                        show_log(" 删除:" + summary.Key + "\r\n");
+                        client.DeleteObject(bucketName, summary.Key);
+                        continue;
+                    }
+
+
+                }
+            
+            }while (result.IsTruncated);
+
+            show_log(" 完成监测是否有过期文件\r\n");
+        
+
+
         }
+
+        private void timer_del_okpic_Tick(object sender, EventArgs e)
+        {
+            timer_del_okpic.Enabled = false;
+            button6_Click(null,null);
+            timer_del_okpic.Enabled = true;
+        }
+
+
     }
 }
