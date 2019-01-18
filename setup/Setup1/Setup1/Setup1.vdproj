@@ -61,6 +61,14 @@
         "PrivateKeyFile" = "8:"
         "TimeStampServer" = "8:"
         "InstallerBootstrapper" = "3:2"
+            "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+            {
+            "Enabled" = "11:TRUE"
+            "PromptEnabled" = "11:TRUE"
+            "PrerequisitesLocation" = "2:1"
+            "Url" = "8:"
+            "ComponentsUrl" = "8:"
+            }
         }
         "Release"
         {
@@ -77,6 +85,14 @@
         "PrivateKeyFile" = "8:"
         "TimeStampServer" = "8:"
         "InstallerBootstrapper" = "3:2"
+            "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+            {
+            "Enabled" = "11:TRUE"
+            "PromptEnabled" = "11:TRUE"
+            "PrerequisitesLocation" = "2:1"
+            "Url" = "8:"
+            "ComponentsUrl" = "8:"
+            }
         }
     }
     "Deployable"
@@ -164,11 +180,6 @@
             "AssemblyAsmDisplayName" = "8:Aliyun.OSS, Version=2.8.0.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_F1A710A9DCE4E7CB3F5C5017537BF511"
-                    {
-                    "Name" = "8:Aliyun.OSS.DLL"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:Aliyun.OSS.DLL"
             "TargetName" = "8:"
@@ -367,7 +378,7 @@
         {
             "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_6B9679F770BD4DAFAA39E5B91A7F42E0"
             {
-            "Name" = "8:WindowsFormsApplication1.exe 的快捷方式"
+            "Name" = "8:色彩自动下载"
             "Arguments" = "8:"
             "Description" = "8:"
             "ShowCmd" = "3:1"

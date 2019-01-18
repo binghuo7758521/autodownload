@@ -39,6 +39,7 @@
             this.timer_del_okpic = new System.Windows.Forms.Timer(this.components);
             this.button6 = new System.Windows.Forms.Button();
             this.checkBox_showlog = new System.Windows.Forms.CheckBox();
+            this.webBrowser1 = new System.Windows.Forms.WebBrowser();
             this.SuspendLayout();
             // 
             // button1
@@ -59,6 +60,7 @@
             this.textBox_log.Name = "textBox_log";
             this.textBox_log.Size = new System.Drawing.Size(702, 562);
             this.textBox_log.TabIndex = 1;
+            this.textBox_log.TextChanged += new System.EventHandler(this.textBox_log_TextChanged);
             // 
             // button2
             // 
@@ -136,11 +138,24 @@
             this.checkBox_showlog.Text = "显示日志";
             this.checkBox_showlog.UseVisualStyleBackColor = true;
             // 
+            // webBrowser1
+            // 
+            this.webBrowser1.Location = new System.Drawing.Point(12, 384);
+            this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
+            this.webBrowser1.Name = "webBrowser1";
+            this.webBrowser1.Size = new System.Drawing.Size(118, 105);
+            this.webBrowser1.TabIndex = 9;
+            this.webBrowser1.Url = new System.Uri("", System.UriKind.Relative);
+            this.webBrowser1.Visible = false;
+            this.webBrowser1.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.webBrowser1_DocumentCompleted);
+            this.webBrowser1.Navigated += new System.Windows.Forms.WebBrowserNavigatedEventHandler(this.webBrowser1_Navigated);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(902, 603);
+            this.Controls.Add(this.webBrowser1);
             this.Controls.Add(this.checkBox_showlog);
             this.Controls.Add(this.button6);
             this.Controls.Add(this.button5);
@@ -169,6 +184,7 @@
         private System.Windows.Forms.Timer timer_del_okpic;
         private System.Windows.Forms.Button button6;
         private System.Windows.Forms.CheckBox checkBox_showlog;
+        private System.Windows.Forms.WebBrowser webBrowser1;
     }
 }
 

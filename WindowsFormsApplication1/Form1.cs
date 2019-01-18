@@ -9,12 +9,15 @@ using System.Windows.Forms;
 using Aliyun.OSS;
 using System.IO;
 using System.Configuration;
+using System.Net;
+ 
 
 
 
 namespace WindowsFormsApplication1
 {
-
+    
+      
     public partial class Form1 : Form
     {
 
@@ -23,10 +26,10 @@ namespace WindowsFormsApplication1
         string accessKeySecret = "6FDB5fftlXxEyZ54obDjpXvtDwHrvC";
         string bucketName = "mywangqingguo1";
         string downok_bucketName = "down_ok";
-        string prefix = "sb/";
+        string prefix = "order/";
         string Current;
         string downtodir = "d:\\autodown\\";
-        
+        Boolean isdoing = true;
 
 
         public Form1()
@@ -112,6 +115,8 @@ namespace WindowsFormsApplication1
             string nextMarker = string.Empty;
             string downloadFilename;
             string temdirname;
+            int temint;
+            string temdatestr,temkeydirstr;
             do
             {
                 var listObjectsRequest = new ListObjectsRequest(bucketName)
@@ -122,14 +127,34 @@ namespace WindowsFormsApplication1
                 };
                 result = client.ListObjects(listObjectsRequest);
                 
+               
+
                 foreach (var summary in result.ObjectSummaries)
                 {
-
+                    string str; int i;
                     show_log("a--"+summary.Key + "\r\n");
+                    str = summary.Key;
+                    i=   str.IndexOf("SH");
+                    if (i <= 0) {
+                        continue;
+                    }
+                        str = str.Substring(i, 15);
+
+                        if (!ispay(str))
+                        {
+                            show_log(" 单号未付款:" + str + "\r\n");
+                            continue;
+                        }else
+                    {
+                        show_log(" 单号以付款:" + str + "\r\n");
+                    }
+                    
+
+
                     keys.Add(summary.Key);
                     if (summary.Size==0) 
                     {
-                        show_log(" 删除:" + summary.Key + "\r\n");
+                        show_log(" 删除summary.keuy:" + summary.Key + "\r\n");
                         client.DeleteObject(bucketName, summary.Key);
                         continue;
                     }
@@ -145,7 +170,10 @@ namespace WindowsFormsApplication1
 
                     using (var requestStream = obj.Content)
                     {
-                        downloadFilename = downtodir + Path.GetDirectoryName(summary.Key);
+                    temkeydirstr= Path.GetDirectoryName(summary.Key);
+                    temint = temkeydirstr.IndexOf("\\") + 1;
+                    temdatestr = temkeydirstr.Substring(temint, 10);
+                    downloadFilename = downtodir + temdatestr + "\\" + temkeydirstr;
                        //    downloadFilename = downtodir + summary.Key;
                    
                         if (Directory.Exists(downloadFilename))
@@ -155,6 +183,7 @@ namespace WindowsFormsApplication1
                         else
                         {
 
+                           
                             Directory.CreateDirectory(downloadFilename);
                         }
 
@@ -239,6 +268,8 @@ namespace WindowsFormsApplication1
         {
             timer1.Enabled = true;
             timer1.Interval = 1000 * 30;
+
+            show_log("下载目录："+downtodir+"\r\n");
             show_log("30秒后自动开始下载，");
 
             timer_del_okpic.Interval = 1000 * 60 * 60;//一个小时监测一次是否有要删除的文件
@@ -311,6 +342,101 @@ namespace WindowsFormsApplication1
             timer_del_okpic.Enabled = false;
             button6_Click(null,null);
             timer_del_okpic.Enabled = true;
+        }
+        public string HttpGet(string Url, string postDataStr)
+        {
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(Url + (postDataStr == "" ? "" : "?") + postDataStr);
+            request.Method = "GET";
+            request.ContentType = "text/html;charset=UTF-8";
+
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            Stream myResponseStream = response.GetResponseStream();
+            StreamReader myStreamReader = new StreamReader(myResponseStream, Encoding.GetEncoding("utf-8"));
+            string retString = myStreamReader.ReadToEnd();
+            myStreamReader.Close();
+            myResponseStream.Close();
+
+            return retString;
+        }
+
+        public Boolean ispay(string orderno) {
+            isdoing = true;
+            webBrowser1.Navigate("https://secai.ahjcg.com/autodown.php?myordersn=" + orderno);
+
+
+            while ( isdoing)  {
+              
+              Application.DoEvents();
+            }
+          
+
+
+
+            string aaa;
+            aaa = webBrowser1.Document.Body.OuterText.ToString();
+            if (aaa.IndexOf("订单已付款") > 0) { 
+            return true;
+            } else {
+                return false;
+            }
+            
+        }
+
+
+
+   public string geihtmlutf8(string url)
+        {
+            try
+            {
+                if (url.Substring(0, 5) == "https")
+                {
+                    // 解决WebClient不能通过https下载内容问题
+                    System.Net.ServicePointManager.ServerCertificateValidationCallback +=
+                        delegate(object sender, System.Security.Cryptography.X509Certificates.X509Certificate certificate,
+                                 System.Security.Cryptography.X509Certificates.X509Chain chain,
+                                 System.Net.Security.SslPolicyErrors sslPolicyErrors)
+                        {
+                            return true; // **** Always accept
+                        };
+                }
+                var hl = new WebClient();
+                var hltext = hl.DownloadData(url); //取网页源码
+                return (Encoding.GetEncoding("UTF-8").GetString(hltext)); //编码转换
+            }
+            catch (Exception ex)
+            {
+                return ex.ToString();
+            }
+
+        }    
+     
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+           
+
+        
+
+        }
+
+        private void textBox_log_TextChanged(object sender, EventArgs e)
+     {
+
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void webBrowser1_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
+        {
+            
+        }
+
+        private void webBrowser1_Navigated(object sender, WebBrowserNavigatedEventArgs e)
+        {
+            isdoing = false;
         }
 
 
